@@ -11,14 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-'use strict';
-
-const got = require('got');
-
-const pkg = require('../package.json');
+import pkg from '../package.json' assert { type: 'json' };
 
 const get = (url, options) => {
-	return got(url, {
+	return fetch(url, {
 		...options,
 		headers: {
 			'User-Agent': `${pkg.name}/${pkg.version} (+${pkg.homepage})`
