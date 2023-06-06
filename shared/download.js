@@ -16,39 +16,35 @@
 const fs = require('fs');
 
 const ProgressBar = require('progress');
-const tempy = require('tempy');
 
-const get = require('./get.js');
+const get = (url,...options) => import('./get.js').then(({get})=>get(url,...options));
 
 const download = (url) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const bar = new ProgressBar('  [:bar] :percent', {
-				complete: '=',
-				incomplete: ' ',
-				width: 72,
-				total: 100,
-			});
-			const response = await get(url, {
-				// Download as binary file.
-				encoding: null,
-			}).on('downloadProgress', (progress) => {
-				bar.update(progress.percent);
-			}).on('error', (error) => {
-				reject(`Download error: ${error}`);
-			});
+
+			const response = await fetch(url);
+			let readBytes = 0;
+			
+			
 			// Clear the progress bar.
 			console.log('\x1B[1A\x1B[2K\x1B[1A');
 			const buffer = response.body;
-			// Passing in `name` ensures that `tempy` creates a temporary directory
-			// in which the file is created. Thus, we can later extract the archive
-			// within this same directory and use wildcards to move its contents,
-			// knowing that there are no other files in the directory.
-			const filePath = tempy.file({
-				name: 'jsvutmpf',
+					
+			fs.mkdtemp(path.join(os.tmpdir(), 'jsvu-'), (err, folder) => {
+			  if (err) throw err;
+			  const filePath = `${folder}/jsvutmpf`; // console.log(folder); Prints: /tmp/foo-itXde2
+			  fetch(url).then((res) =>
+ 			  fs.promises.writeFile(filePath, res.body.pipeThrough(
+			  new TransformStream({ transform(data,controller){
+			  controller.enqueue(data);
+			  readBytes += data.length;
+			  console.log(filePath, readBytes);
+		          return filePath;
+			  }}))))).then(resolve);
 			});
-			fs.writeFileSync(filePath, buffer);
-			resolve(filePath);
+			
+			
 		} catch (error) {
 			reject(error);
 		}
