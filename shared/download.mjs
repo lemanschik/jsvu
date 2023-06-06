@@ -5,12 +5,13 @@ export const download = async (url) => {
   // console.log(filePath); Prints: /tmp/jsvu-itXde2/jsvutmpf
   const filePath = `${await fsPromises.mkdtemp(path.join(os.tmpdir(), 'jsvu-')}/jsvutmpf`;
   return fetch(url).then((res) =>
-  fsPromises.writeFile(filePath, res.body.pipeThrough(
+  const contentLength = +res.headers.get('Content-Length');
+	fsPromises.writeFile(filePath, res.body.pipeThrough(
   new TransformStream({ transform(data,controller){
   controller.enqueue(data);
   readBytes += data.length;
   console.log('\x1B[1A\x1B[2K\x1B[1A');
-  console.log(filePath, readBytes);
+  console.log(filePath, readBytes,'of',contentLength);
   // Clear the progress bar.
   return filePath;
   }})))));
