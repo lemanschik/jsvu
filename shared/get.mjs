@@ -13,7 +13,7 @@
 
 import pkg from '../package.json' assert { type: 'json' };
 
-const get = (url, options) => {
+export const get = (url, options) => {
 	return fetch(url, {
 		...options,
 		headers: {
@@ -22,4 +22,4 @@ const get = (url, options) => {
 	});
 };
 
-module.exports = get;
+
