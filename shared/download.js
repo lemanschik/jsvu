@@ -15,13 +15,8 @@
 
 const fs = require('fs');
 
-const ProgressBar = require('progress');
-
-const get = (url,...options) => import('./get.js').then(({get})=>get(url,...options));
-
-const download = (url) => {
-	return new Promise(async (resolve, reject) => {
-		try {
+const download = async (url) => {
+	
 
 			const response = await fetch(url);
 			let readBytes = 0;
@@ -31,8 +26,10 @@ const download = (url) => {
 			console.log('\x1B[1A\x1B[2K\x1B[1A');
 			const buffer = response.body;
 					
-			fs.mkdtemp(path.join(os.tmpdir(), 'jsvu-'), (err, folder) => {
-			  if (err) throw err;
+			
+					    
+					    
+			  
 			  const filePath = `${folder}/jsvutmpf`; // console.log(folder); Prints: /tmp/foo-itXde2
 			  fetch(url).then((res) =>
  			  fs.promises.writeFile(filePath, res.body.pipeThrough(
@@ -41,14 +38,11 @@ const download = (url) => {
 			  readBytes += data.length;
 			  console.log(filePath, readBytes);
 		          return filePath;
-			  }}))))).then(resolve);
-			});
+			  }})))))
 			
 			
-		} catch (error) {
-			reject(error);
-		}
-	});
+			
+	
 };
 
 module.exports = download;
